@@ -127,6 +127,7 @@ damping value it will barely swing and move very slowly.
     </figcaption>
 <div>
 
+
 ## Part 3: Handling collisions with other objects
 
 
