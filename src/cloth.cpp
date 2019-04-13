@@ -89,11 +89,53 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
   double mass = width * height * cp->density / num_width_points / num_height_points;
   double delta_t = 1.0f / frames_per_sec / simulation_steps;
 
-  // TODO (Part 2): Compute total force acting on each point mass.
+  // (Part 2): Compute total force acting on each point mass.
 
+  Vector3D externalForce = {};
+  for (Vector3D &a : external_accelerations)
+    externalForce += a;
+  externalForce *= mass;
 
-  // TODO (Part 2): Use Verlet integration to compute new point mass positions
+  // apply external forces
+  for (int i = 0; i < num_width_points; ++i)
+    for (int j = 0; j < num_height_points; ++j)
+      point_masses[i * num_width_points + j].forces = externalForce;
 
+  // apply spring correction forces
+  for (Spring &spring : springs) {
+    // check if the given spring type is enabled
+    switch (spring.spring_type) {
+      case STRUCTURAL:
+        if (!cp->enable_structural_constraints)
+          continue;
+      case SHEARING:
+        if (!cp->enable_shearing_constraints)
+          continue;
+      case BENDING:
+        if (!cp->enable_bending_constraints)
+          continue;
+    }
+
+    // apply spring forces by Hooke's Law
+    Vector3D dirA2B = spring.pm_b->position - spring.pm_a->position;
+    double springForce = 0.2 * cp->ks * (dirA2B.norm() - spring.rest_length);
+    spring.pm_a->forces += dirA2B.unit() * springForce;
+    spring.pm_b->forces -= dirA2B.unit() * springForce;
+  }
+
+  // (Part 2): Use Verlet integration to compute new point mass positions
+
+  // update positions using Verlet integration
+  for (int i = 0; i < num_width_points; ++i)
+    for (int j = 0; j < num_height_points; ++j) {
+      PointMass &pm = point_masses[i * num_width_points + j];
+      if (!pm.pinned) {
+        Vector3D newPosition = pm.position + (1 - cp->damping / 100) * (pm.position - pm.last_position)
+                               + pm.forces / mass * delta_t * delta_t;
+        pm.last_position = pm.position;
+        pm.position = newPosition;
+      }
+    }
 
   // TODO (Part 4): Handle self-collisions.
 
@@ -101,9 +143,37 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
   // TODO (Part 3): Handle collisions with other primitives.
 
 
-  // TODO (Part 2): Constrain the changes to be such that the spring does not change
+  // (Part 2): Constrain the changes to be such that the spring does not change
   // in length more than 10% per timestep [Provot 1995].
 
+  for (Spring &spring : springs) {
+    // check if the given spring type is enabled
+    switch (spring.spring_type) {
+      case STRUCTURAL:
+        if (!cp->enable_structural_constraints)
+          continue;
+      case SHEARING:
+        if (!cp->enable_shearing_constraints)
+          continue;
+      case BENDING:
+        if (!cp->enable_bending_constraints)
+          continue;
+    }
+
+    // constraint position updates
+    Vector3D dirA2B = spring.pm_b->position - spring.pm_a->position;
+    double length = dirA2B.norm();
+    if (length > 1.1 * spring.rest_length) {
+      if (!spring.pm_a->pinned && !spring.pm_b->pinned) {
+        spring.pm_a->position += 0.5 * dirA2B.unit() * (length - 1.1 * spring.rest_length);
+        spring.pm_b->position -= 0.5 * dirA2B.unit() * (length - 1.1 * spring.rest_length);
+      } else if (!spring.pm_a->pinned && spring.pm_b->pinned) {
+        spring.pm_a->position += dirA2B.unit() * (length - 1.1 * spring.rest_length);
+      } else if (spring.pm_a->pinned && !spring.pm_b->pinned) {
+        spring.pm_b->position -= dirA2B.unit() * (length - 1.1 * spring.rest_length);
+      }
+    }
+  }
 }
 
 void Cloth::build_spatial_map() {
