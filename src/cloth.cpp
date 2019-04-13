@@ -30,9 +30,57 @@ Cloth::~Cloth() {
   }
 }
 
-void Cloth::buildGrid() {
-  // TODO (Part 1): Build a grid of masses and springs.
+/**
+ * Attempt adding a spring between (x, y) and (x + dx, y + dy). Assuming (x, y)
+ * is a valid coordinate, and add a spring iff (x + dx, y + dy) is also a valid
+ * coordinate.
+ */
+void Cloth::tryAddSpring(int x, int y, int dx, int dy, e_spring_type spring_type) {
+  if (0 <= x + dx && x + dx < num_width_points
+      && 0 <= y + dy && y + dy < num_height_points) {
+    springs.emplace_back(Spring(
+            &point_masses[x * num_width_points + y],
+            &point_masses[(x + dx) * num_width_points + (y + dy)],
+            spring_type));
+  }
+}
 
+void Cloth::buildGrid() {
+  // (Part 1): Build a grid of masses and springs.
+
+  // add the point masses in row-major order
+  for (int i = 0; i < num_width_points; ++i)
+    for (int j = 0; j < num_height_points; ++j) {
+      Vector3D position;
+      if (orientation == HORIZONTAL) {
+        position = {width / num_width_points * i, 1, height / num_height_points * j};
+      } else if (orientation == VERTICAL) {
+        double z = ((double) rand() / RAND_MAX - 0.5) / 500;
+        position = {width / num_width_points * i, height / num_height_points * j, z};
+      }
+
+      point_masses.emplace_back(PointMass(position, false));
+    }
+
+  // pin the pinned point masses
+  for (vector<int> coord : pinned)
+    point_masses[coord[0] * num_width_points + coord[1]].pinned = true;
+
+  // add the springs
+  for (int i = 0; i < num_width_points; ++i)
+    for (int j = 0; j < num_height_points; ++j) {
+      // structural constraints
+      tryAddSpring(i, j, -1, 0, STRUCTURAL);
+      tryAddSpring(i, j, 0, -1, STRUCTURAL);
+
+      // shearing constraints
+      tryAddSpring(i, j, -1, -1, SHEARING);
+      tryAddSpring(i, j, -1, 1, SHEARING);
+
+      // bending constraints
+      tryAddSpring(i, j, -2, 0, BENDING);
+      tryAddSpring(i, j, -0, -2, BENDING);
+    }
 }
 
 void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParameters *cp,
@@ -60,7 +108,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
 
 void Cloth::build_spatial_map() {
   for (const auto &entry : map) {
-    delete(entry.second);
+    delete (entry.second);
   }
   map.clear();
 
@@ -76,7 +124,7 @@ void Cloth::self_collide(PointMass &pm, double simulation_steps) {
 float Cloth::hash_position(Vector3D pos) {
   // TODO (Part 4): Hash a 3D position into a unique float identifier that represents membership in some 3D box volume.
 
-  return 0.f; 
+  return 0.f;
 }
 
 ///////////////////////////////////////////////////////
@@ -116,7 +164,7 @@ void Cloth::buildClothMesh() {
        * pm_C -------- pm_D   *
        *                      *
        */
-      
+
       float u_min = x;
       u_min /= num_width_points - 1;
       float u_max = x + 1;
@@ -125,22 +173,22 @@ void Cloth::buildClothMesh() {
       v_min /= num_height_points - 1;
       float v_max = y + 1;
       v_max /= num_height_points - 1;
-      
-      PointMass *pm_A = pm                       ;
-      PointMass *pm_B = pm                    + 1;
-      PointMass *pm_C = pm + num_width_points    ;
+
+      PointMass *pm_A = pm;
+      PointMass *pm_B = pm + 1;
+      PointMass *pm_C = pm + num_width_points;
       PointMass *pm_D = pm + num_width_points + 1;
-      
+
       Vector3D uv_A = Vector3D(u_min, v_min, 0);
       Vector3D uv_B = Vector3D(u_max, v_min, 0);
       Vector3D uv_C = Vector3D(u_min, v_max, 0);
       Vector3D uv_D = Vector3D(u_max, v_max, 0);
-      
-      
+
+
       // Both triangles defined by vertices in counter-clockwise orientation
-      triangles.push_back(new Triangle(pm_A, pm_C, pm_B, 
+      triangles.push_back(new Triangle(pm_A, pm_C, pm_B,
                                        uv_A, uv_C, uv_B));
-      triangles.push_back(new Triangle(pm_B, pm_C, pm_D, 
+      triangles.push_back(new Triangle(pm_B, pm_C, pm_D,
                                        uv_B, uv_C, uv_D));
     }
   }

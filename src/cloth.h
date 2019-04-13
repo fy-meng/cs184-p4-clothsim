@@ -47,6 +47,7 @@ struct Cloth {
         int num_height_points, float thickness);
   ~Cloth();
 
+  void tryAddSpring(int x, int y, int dx, int dy, e_spring_type type);
   void buildGrid();
 
   void simulate(double frames_per_sec, double simulation_steps, ClothParameters *cp,
