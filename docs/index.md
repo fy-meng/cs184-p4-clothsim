@@ -15,18 +15,26 @@ structural, shearing or bending by connect to different point masses.
         <tr>
             <td align="middle">
                 <img src="images/p1_all.png" width="100%"/>
+            </td>
+            <td align="middle">
+                <img src="images/p1_shearing.png" width="100%"/>
+            </td>
+            <td align="middle">
+                <img src="images/p1_others.png" width="100%"/>
+            </td>
+        </tr>
+        <tr>
+            <td align="middle">
                 <figcaption align="middle"> 
                     <code>pinned2.json</code> representation.
                 </figcaption>
             </td>
             <td align="middle">
-                <img src="images/p1_shearing.png" width="100%"/>
                 <figcaption align="middle"> 
                     <code>pinned2.json</code> with only shearing constraints.
                 </figcaption>
             </td>
             <td align="middle">
-                <img src="images/p1_others.png" width="100%"/>
                 <figcaption align="middle"> 
                     <code>pinned2.json</code> with only structual and bending constraints.
                 </figcaption>
