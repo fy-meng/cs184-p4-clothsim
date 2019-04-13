@@ -63,8 +63,8 @@ void Cloth::buildGrid() {
     }
 
   // pin the pinned point masses
-  for (vector<int> coord : pinned)
-    point_masses[coord[0] * num_width_points + coord[1]].pinned = true;
+  for (vector<int> anchor : pinned)
+    point_masses[anchor[0] * num_width_points + anchor[1]].pinned = true;
 
   // add the springs
   for (int i = 0; i < num_width_points; ++i)
@@ -97,9 +97,8 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
   externalForce *= mass;
 
   // apply external forces
-  for (int i = 0; i < num_width_points; ++i)
-    for (int j = 0; j < num_height_points; ++j)
-      point_masses[i * num_width_points + j].forces = externalForce;
+  for (PointMass &pm : point_masses)
+    pm.forces = externalForce;
 
   // apply spring correction forces
   for (Spring &spring : springs) {
@@ -125,23 +124,22 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
 
   // (Part 2): Use Verlet integration to compute new point mass positions
 
-  // update positions using Verlet integration
-  for (int i = 0; i < num_width_points; ++i)
-    for (int j = 0; j < num_height_points; ++j) {
-      PointMass &pm = point_masses[i * num_width_points + j];
-      if (!pm.pinned) {
-        Vector3D newPosition = pm.position + (1 - cp->damping / 100) * (pm.position - pm.last_position)
-                               + pm.forces / mass * delta_t * delta_t;
-        pm.last_position = pm.position;
-        pm.position = newPosition;
-      }
+  for (PointMass &pm : point_masses)
+    if (!pm.pinned) {
+      Vector3D newPosition = pm.position + (1 - cp->damping / 100) * (pm.position - pm.last_position)
+                             + pm.forces / mass * delta_t * delta_t;
+      pm.last_position = pm.position;
+      pm.position = newPosition;
     }
 
   // TODO (Part 4): Handle self-collisions.
 
 
-  // TODO (Part 3): Handle collisions with other primitives.
+  // (Part 3): Handle collisions with other primitives.
 
+  for (PointMass &pm : point_masses)
+    for (CollisionObject *obj : *collision_objects)
+      obj->collide(pm);
 
   // (Part 2): Constrain the changes to be such that the spring does not change
   // in length more than 10% per timestep [Provot 1995].
