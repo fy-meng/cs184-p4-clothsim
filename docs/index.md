@@ -125,7 +125,7 @@ damping value it will barely swing and move very slowly.
     <figcaption align="middle"> 
         <code>pinned4.json</code> in its terminal state.
     </figcaption>
-<div>
+</div>
 
 
 ## Part 3: Handling collisions with other objects
