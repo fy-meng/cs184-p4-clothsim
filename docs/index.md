@@ -143,6 +143,61 @@ damping value it will barely swing and move very slowly.
 
 ## Part 3: Handling collisions with other objects
 
+In this part, we make sure that the cloth can correctly collide with 
+spheres and planes by move the point masses back a little bit if it is 
+colliding with the object.
+
+For spheres, we define a collision as the situation where the location 
+of the point mass is inside the sphere. If collides, we move the mass 
+towards the surface of sphere from its previous location, and scale down 
+the displacement by a friction factor; 
+
+For planes, we define a collision 
+as the current location and the previous location of the mass is on 
+different sides of the plane. If collides, similarly, we move the mass 
+towards the other side of the plane from it previous location, and scale 
+down the displacement by a friction factor. We also make sure that if 
+its location is too close to the plane, we move the mass out a little 
+bit to prevent the cloth from vibrating.
+
+<div align="middle">
+    <table width="100%" align="middle">
+        <tr>
+            <td align="middle">
+                <img src="images/p3_sphere_500.png" width="100%"/>
+            </td>
+            <td align="middle">
+                <img src="images/p3_sphere_5000.png" width="100%"/>
+            </td>
+            <td align="middle">
+                <img src="images/p3_sphere_50000.png" width="100%"/>
+            </td>
+        </tr>
+        <tr>
+            <td figcaption align="middle"> 
+                Cloth colliding with a sphere with ks=500.
+            </figcaption /td>
+            <td figcaption align="middle"> 
+                Cloth colliding with a sphere with ks=5000.
+            </figcaption /td>
+            <td figcaption align="middle"> 
+                Cloth colliding with a sphere with ks=50000.
+            </figcaption /td>
+        </tr>
+    </table>
+</div>
+
+As we can see, the smaller the coefficient of the spring is, the more 
+the cloth will dangle from the sphere. If ks is large, the internal 
+force from the springs will hold the cloth from dangling more.
+
+<div align="middle">
+    <img src="images/p3_plane.png" width="60%"/>
+    <figcaption align="middle"> 
+        Cloth resting on a plane with diffuse lighting.
+    </figcaption>
+</div>
+
 
 ## Part 4: Handling self-collisions
 
