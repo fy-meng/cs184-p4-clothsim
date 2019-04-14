@@ -49,8 +49,8 @@ void Cloth::buildGrid() {
   // (Part 1): Build a grid of masses and springs.
 
   // add the point masses in row-major order
-  for (int i = 0; i < num_width_points; ++i)
-    for (int j = 0; j < num_height_points; ++j) {
+  for (int j = 0; j < num_height_points; ++j)
+    for (int i = 0; i < num_width_points; ++i) {
       Vector3D position;
       if (orientation == HORIZONTAL) {
         position = {width / num_width_points * i, 1, height / num_height_points * j};
