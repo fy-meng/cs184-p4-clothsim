@@ -201,5 +201,70 @@ force from the springs will hold the cloth from dangling more.
 
 ## Part 4: Handling self-collisions
 
+In this part, we resolve the issue of the cloth's self-collision with a 
+somewhat efficient algorithm with hashing.
+
+<div align="middle">
+    <img src="images/p4_terminal.png" width="60%"/>
+    <figcaption align="middle"> 
+        Folding cloth in a somewhat restful state.
+    </figcaption>
+</div>
+
+At each timestamp, we map calculate the hash for the positions of all 
+point masses and generate a hash table. The hash is calculated by taking 
+modulo of its position by a empirical hash box size, and then sum the 
+coordinates with different power of a prime number, like generating a 
+hash for a polynomial or a string. Then, for each hash box, we apply a 
+correction displacement for each different point in the same box, trying 
+to move so that the masses are at least `2 * thickness` away from each 
+other. The final displacement is the weighted sum of the corrections 
+from all other masses in the same box. In this way, our cloth is moving 
+itself from collapsing on itself.
+
+Again, in the following table, we can see the difference result from 
+different coefficients. The images in the middle column are identical 
+and is for reference.
+
+<div align="middle">
+    <table width="100%" align="middle">
+        <tr>
+            <td align="middle"> </td>
+            <td align="middle"> Low </td>
+            <td align="middle"> Default </td>
+            <td align="middle"> High </td>
+        </tr>
+        <tr>
+            <td align="middle"> density </td>
+            <td align="middle">
+                <img src="images/p4_density_low.gif" width="100%"/>
+            </td>
+            <td align="middle">
+                <img src="images/p4_reference.gif" width="100%"/>
+            </td>
+            <td align="middle">
+                <img src="images/p4_density_high.gif" width="100%"/>
+            </td>
+        </tr>
+        <tr>
+            <td align="middle"> ks </td>
+            <td align="middle">
+                <img src="images/p4_ks_low.gif" width="100%"/>
+            </td>
+            <td align="middle">
+                <img src="images/p4_reference.gif" width="100%"/>
+            </td>
+            <td align="middle">
+                <img src="images/p4_ks_high.gif" width="100%"/>
+            </td>
+        </tr>
+    </table>
+</div>
+
+As we can see, ks and density are acting like a pair of antagonist 
+forces. A higher ks or a lower density will cause less number of folds 
+to appear since the cloth will tend to preserve its original shape, 
+while a lower ks or a higher density will cause it to fold faster and in
+more number of folds.
 
 ## Part 5: Shaders
