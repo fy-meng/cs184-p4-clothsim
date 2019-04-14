@@ -174,15 +174,21 @@ bit to prevent the cloth from vibrating.
             </td>
         </tr>
         <tr>
-            <td figcaption align="middle"> 
-                Cloth colliding with a sphere with ks=500.
-            </figcaption /td>
-            <td figcaption align="middle"> 
-                Cloth colliding with a sphere with ks=5000.
-            </figcaption /td>
-            <td figcaption align="middle"> 
-                Cloth colliding with a sphere with ks=50000.
-            </figcaption /td>
+            <td> 
+                <figcaption align="middle"> 
+                    Cloth colliding with a sphere with ks=500.
+                </figcaption> 
+            </td>
+            <td> 
+                <figcaption align="middle"> 
+                    Cloth colliding with a sphere with ks=5000.
+                </figcaption> 
+            </td>
+            <td> 
+                <figcaption align="middle"> 
+                    Cloth colliding with a sphere with ks=50000.
+                </figcaption> 
+            </td>
         </tr>
     </table>
 </div>
