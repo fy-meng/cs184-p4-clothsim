@@ -10,6 +10,11 @@ In this part, we created a cloth representation with a grid of point
 masses and springs that connect them. We categorize the springs as
 structural, shearing or bending by connect to different point masses.
 
+We achieve this by splitting the plane of the cloth evenly into 
+`num_width_points * num_height_points` point masses and store them into 
+the array, and then try adding three types of springs accordingly if 
+both points are valid coordinates.
+
 <div align="middle">
     <table width="100%" align="middle">
         <tr>
@@ -53,6 +58,14 @@ Verlet integration is done by saving the location for each point masses
 at the previous timestamp and use it to approximate velocity. We also 
 made a constraint on the springs that they cannot extent more than 10% 
 of their rest length to prevent overly extended springs.
+
+We first compute the total force by adding up the global forces (e.g. 
+gravity) and the internal forces using Hooke's Law on the springs. Then,
+we compute displacement using Verlet integration by incorporating the 
+previous location, the velocity and the acceleration. We also scale down 
+the effect velocity to simulate frictions. After that, for all springs 
+that are extending more than 10%, we move the corresponding point masses 
+back to prevent the spring from over-extending.
 
 In the following table, we can see the difference result from different 
 configuration. The images in the middle column are identical and is for
