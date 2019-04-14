@@ -77,6 +77,10 @@ struct Cloth {
 
   // Spatial hashing
   unordered_map<float, vector<PointMass *> *> map;
+
+private:
+  // Box for spatial hashing
+  Vector3D box = NULL;
 };
 
 #endif /* CLOTH_H */

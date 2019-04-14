@@ -15,7 +15,7 @@ void Plane::collide(PointMass &pm) {
 
   double dist = dot(normal, pm.position - point);
   double lastDist = dot(normal, pm.last_position - point);
-  if (dist * lastDist < SURFACE_OFFSET) {
+  if (dist * lastDist <= 0 || dist <= SURFACE_OFFSET) {
     Vector3D tangent = pm.position + (-dist + SURFACE_OFFSET) * normal;
     pm.position = pm.last_position + (1 - friction) * (tangent - pm.last_position);
   }

@@ -134,6 +134,9 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
 
   // TODO (Part 4): Handle self-collisions.
 
+  build_spatial_map();
+  for (PointMass &pm : point_masses)
+    self_collide(pm, simulation_steps);
 
   // (Part 3): Handle collisions with other primitives.
 
@@ -175,24 +178,63 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
 }
 
 void Cloth::build_spatial_map() {
-  for (const auto &entry : map) {
-    delete (entry.second);
+  for (const auto &entry : map)
+    entry.second->clear();
+
+  // (Part 4): Build a spatial map out of all of the point masses.
+
+  for (PointMass &pm : point_masses) {
+    float hash = hash_position(pm.position);
+    if (map.find(hash) == map.end())
+      map.emplace(hash, new vector<PointMass *>());
+
+    map[hash]->push_back(&pm);
   }
-  map.clear();
-
-  // TODO (Part 4): Build a spatial map out of all of the point masses.
-
 }
 
 void Cloth::self_collide(PointMass &pm, double simulation_steps) {
-  // TODO (Part 4): Handle self-collision for a given point mass.
+  // (Part 4): Handle self-collision for a given point mass.
 
+  if (pm.pinned)
+    return;
+
+  Vector3D correction = {};
+  int count = 0;
+  float hash = hash_position(pm.position);
+  for (PointMass *candidate : *map[hash]) {
+    Vector3D dir = pm.position - candidate->position;
+    if (candidate != &pm && dir.norm() <= 2 * thickness) {
+      correction += dir.unit() * (2 * thickness - dir.norm());
+      count++;
+    }
+  }
+
+  if (count)
+    pm.position += correction / count / simulation_steps;
 }
 
-float Cloth::hash_position(Vector3D pos) {
-  // TODO (Part 4): Hash a 3D position into a unique float identifier that represents membership in some 3D box volume.
+#define HASH_PRIME 997
 
-  return 0.f;
+float Cloth::hash_position(Vector3D pos) {
+  // (Part 4): Hash a 3D position into a unique float identifier that represents membership in some 3D box volume.
+
+  if (box == NULL) {
+    if (orientation == HORIZONTAL) {
+      box.x = 3 * (float) width / num_width_points;
+      box.z = 3 * (float) height / num_height_points;
+      box.y = fmax(box.x, box.z);
+    } else if (orientation == VERTICAL) {
+      box.x = 3 * (float) width / num_width_points;
+      box.y = 3 * (float) height / num_height_points;
+      box.z = fmax(box.x, box.y);
+    }
+  }
+
+  double x = (pos.x - fmod(pos.x, box.x)) / box.x;
+  double y = (pos.y - fmod(pos.y, box.y)) / box.y;
+  double z = (pos.z - fmod(pos.z, box.z)) / box.z;
+
+  return (float) (x + y * HASH_PRIME + z * HASH_PRIME * HASH_PRIME);
 }
 
 ///////////////////////////////////////////////////////
