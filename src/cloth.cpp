@@ -230,9 +230,9 @@ float Cloth::hash_position(Vector3D pos) {
     }
   }
 
-  double x = (pos.x - fmod(pos.x, box.x)) / box.x;
-  double y = (pos.y - fmod(pos.y, box.y)) / box.y;
-  double z = (pos.z - fmod(pos.z, box.z)) / box.z;
+  double x = std::floor(pos.x / box.x);
+  double y = std::floor(pos.y / box.y);
+  double z = std::floor(pos.z / box.z);
 
   return (float) (x + y * HASH_PRIME + z * HASH_PRIME * HASH_PRIME);
 }
