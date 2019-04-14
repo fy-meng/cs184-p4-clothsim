@@ -14,7 +14,8 @@ void Plane::collide(PointMass &pm) {
   // (Part 3): Handle collisions with planes.
 
   double dist = dot(normal, pm.position - point);
-  if (dist < SURFACE_OFFSET) {
+  double lastDist = dot(normal, pm.last_position - point);
+  if (dist * lastDist < SURFACE_OFFSET) {
     Vector3D tangent = pm.position + (-dist + SURFACE_OFFSET) * normal;
     pm.position = pm.last_position + (1 - friction) * (tangent - pm.last_position);
   }
