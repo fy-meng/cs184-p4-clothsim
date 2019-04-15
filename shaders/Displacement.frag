@@ -6,8 +6,8 @@ uniform vec3 u_light_intensity;
 
 uniform vec4 u_color;
 
-uniform sampler2D u_texture_2;
-uniform vec2 u_texture_2_size;
+uniform sampler2D u_texture_3;
+uniform vec2 u_texture_3_size;
 
 uniform float u_normal_scaling;
 uniform float u_height_scaling;
@@ -21,14 +21,14 @@ out vec4 out_color;
 
 float h(vec2 uv) {
   // Returns the height given texture coordinate
-  return texture(u_texture_2, uv).r;
+  return texture(u_texture_3, uv).r;
 }
 
 void main() {
   // Compute displaced model space normal
   mat3 tbn = mat3(v_tangent.xyz, cross(v_normal.xyz, v_tangent.xyz), v_normal.xyz);
-  float du = (h(vec2(v_uv.x + 1 / u_texture_2_size.x, v_uv.y)) - h(v_uv)) * u_normal_scaling * u_height_scaling;
-  float dv = (h(vec2(v_uv.x, v_uv.y + 1 / u_texture_2_size.y)) - h(v_uv)) * u_normal_scaling * u_height_scaling;
+  float du = (h(vec2(v_uv.x + 1 / u_texture_3_size.x, v_uv.y)) - h(v_uv)) * u_normal_scaling * u_height_scaling;
+  float dv = (h(vec2(v_uv.x, v_uv.y + 1 / u_texture_3_size.y)) - h(v_uv)) * u_normal_scaling * u_height_scaling;
   vec3 nd = tbn * vec3(-du, -dv, 1);
 
   // Coefficient for Blinn-Phong model
