@@ -20,17 +20,15 @@ out vec2 v_uv;
 out vec4 v_tangent;
 
 float h(vec2 uv) {
-  // You may want to use this helper function...
-  return 0;
+  // Returns the height given texture coordinate
+  return texture(u_texture_2, uv).r;
 }
 
 void main() {
-  // YOUR CODE HERE
-  
-  // (Placeholder code. You will want to replace it.)
-  v_position = u_model * in_position;
   v_normal = normalize(u_model * in_normal);
+  v_position = u_model * in_position + v_normal * h(v_uv) * u_height_scaling;
   v_uv = in_uv;
   v_tangent = normalize(u_model * in_tangent);
-  gl_Position = u_view_projection * u_model * in_position;
+
+  gl_Position = u_view_projection * u_model * (in_position + in_normal * h(v_uv) * u_height_scaling);
 }

@@ -20,15 +20,30 @@ in vec2 v_uv;
 out vec4 out_color;
 
 float h(vec2 uv) {
-  // You may want to use this helper function...
-  return 0;
+  // Returns the height given texture coordinate
+  return texture(u_texture_2, uv).r;
 }
 
 void main() {
-  // YOUR CODE HERE
-  
-  // (Placeholder code. You will want to replace it.)
-  out_color = (vec4(1, 1, 1, 0) + v_normal) / 2;
+  // Compute displaced model space normal
+  mat3 tbn = mat3(v_tangent.xyz, cross(v_normal.xyz, v_tangent.xyz), v_normal.xyz);
+  float du = (h(vec2(v_uv.x + 1 / u_texture_2_size.x, v_uv.y)) - h(v_uv)) * u_normal_scaling * u_height_scaling;
+  float dv = (h(vec2(v_uv.x, v_uv.y + 1 / u_texture_2_size.y)) - h(v_uv)) * u_normal_scaling * u_height_scaling;
+  vec3 nd = tbn * vec3(-du, -dv, 1);
+
+  // Coefficient for Blinn-Phong model
+  float kd = 0.7;
+  float ks = 0.6;
+  vec3 global_illum = 0.1 * vec3(1, 1, 1);
+  int p = 48;
+
+  // Copmute lighting using Blinn-Phong model
+  vec3 wi = u_light_pos - v_position.xyz;
+  vec3 illum = u_light_intensity / dot(wi, wi);
+  vec3 h = normalize(u_light_pos + u_cam_pos - 2 * v_position.xyz);
+  out_color.rgb = global_illum
+                  + kd * illum * max(0, dot(nd, normalize(wi)))
+                  + ks * illum * pow(max(0, dot(nd, h)), p);
   out_color.a = 1;
 }
 

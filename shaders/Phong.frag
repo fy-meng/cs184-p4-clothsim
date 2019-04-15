@@ -12,10 +12,19 @@ in vec2 v_uv;
 out vec4 out_color;
 
 void main() {
-  // YOUR CODE HERE
-  
-  // (Placeholder code. You will want to replace it.)
-  out_color = (vec4(1, 1, 1, 0) + v_normal) / 2;
+  // Coefficient for Blinn-Phong model
+  float kd = 0.7;
+  float ks = 0.6;
+  vec3 global_illum = 0.1 * vec3(1, 1, 1);
+  int p = 48;
+
+  // Copmute lighting using Blinn-Phong model
+  vec3 wi = u_light_pos - v_position.xyz;
+  vec3 illum = u_light_intensity / dot(wi, wi);
+  vec3 h = normalize(u_light_pos + u_cam_pos - 2 * v_position.xyz);
+  out_color.rgb = global_illum
+                  + kd * illum * max(0, dot(v_normal.xyz, normalize(wi)))
+                  + ks * illum * pow(max(0, dot(v_normal.xyz, h)), p);
   out_color.a = 1;
 }
 
