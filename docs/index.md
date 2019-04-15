@@ -299,37 +299,19 @@ otherwise.
         <tr>
             <td align="middle">
                 <img src="images/p5_phong_global.png" width="100%"/>
+                <figcaption align="middle"> Ambient component. </figcaption>
             </td>
             <td align="middle">
-                <img src="images/p5_phong_diffse.png" width="100%"/>
+                <img src="images/p5_phong_diffuse.png" width="100%"/>
+                <figcaption align="middle"> Diffuse component. </figcaption>
             </td>
             <td align="middle">
                 <img src="images/p5_phong_specular.png" width="100%"/>
+                <figcaption align="middle"> Specular component. </figcaption> 
             </td>
             <td align="middle">
                 <img src="images/p5_phong_all.png" width="100%"/>
-            </td>
-        </tr>
-        <tr>
-            <td> 
-                <figcaption align="middle"> 
-                    Ambient component in Blinn-Phong model.
-                </figcaption> 
-            </td>
-            <td> 
-                <figcaption align="middle"> 
-                    Diffuse component in Blinn-Phong model.
-                </figcaption> 
-            </td>
-            <td> 
-                <figcaption align="middle"> 
-                    Specular component in Blinn-Phong model.
-                </figcaption> 
-            </td>
-            <td> 
-                <figcaption align="middle"> 
-                    Final result of Blinn-Phong model.
-                </figcaption> 
+                <figcaption align="middle"> Blinn-Phong model. </figcaption> 
             </td>
         </tr>
     </table>
@@ -347,21 +329,11 @@ otherwise.
         <tr>
             <td align="middle">
                 <img src="images/p5_bump.png" width="100%"/>
+                <figcaption align="middle"> Bump with brick texture. </figcaption> 
             </td>
             <td align="middle">
                 <img src="images/p5_displacement.png" width="100%"/>
-            </td>
-        </tr>
-        <tr>
-            <td> 
-                <figcaption align="middle"> 
-                    Bump with brick texture.
-                </figcaption> 
-            </td>
-            <td> 
-                <figcaption align="middle"> 
-                    Dispacement with brick texture.
-                </figcaption> 
+                <figcaption align="middle"> Dispacement with brick texture. </figcaption> 
             </td>
         </tr>
     </table>
@@ -372,41 +344,21 @@ otherwise.
         <tr>
             <td align="middle">
                 <img src="images/p5_bump_coarse.png" width="100%"/>
+                <figcaption align="middle"> Bump, more coarse sphere mesh. </figcaption>
             </td>
             <td align="middle">
                 <img src="images/p5_displacement_coarse.png" width="100%"/>
-            </td>
-        </tr>
-        <tr>
-            <td> 
-                <figcaption align="middle"> 
-                    Bump, more coarse sphere mesh.
-                </figcaption> 
-            </td>
-            <td> 
-                <figcaption align="middle"> 
-                    Dispacement, more coarse sphere mesh.
-                </figcaption> 
+                <figcaption align="middle"> Dispacement, more coarse sphere mesh. </figcaption> 
             </td>
         </tr>
         <tr>
             <td align="middle">
                 <img src="images/p5_bump_fine.png" width="100%"/>
+                <figcaption align="middle"> Bump, finer sphere mesh. </figcaption>
             </td>
             <td align="middle">
                 <img src="images/p5_displacement_fine.png" width="100%"/>
-            </td>
-        </tr>
-        <tr>
-            <td> 
-                <figcaption align="middle"> 
-                    Bump, finer sphere mesh.
-                </figcaption> 
-            </td>
-            <td> 
-                <figcaption align="middle"> 
-                    Dispacement, finer sphere mesh.
-                </figcaption> 
+                <figcaption align="middle"> Dispacement, finer sphere mesh. </figcaption> 
             </td>
         </tr>
     </table>
@@ -427,21 +379,11 @@ prominent.
         <tr>
             <td align="middle">
                 <img src="images/p5_mirror_cloth.png" width="100%"/>
+                <figcaption align="middle"> Mirror-like cloth. </figcaption>
             </td>
             <td align="middle">
                 <img src="images/p5_mirror_sphere.png" width="100%"/>
-            </td>
-        </tr>
-        <tr>
-            <td> 
-                <figcaption align="middle"> 
-                    Mirror on the cloth.
-                </figcaption> 
-            </td>
-            <td> 
-                <figcaption align="middle"> 
-                    Mirror on the sphere.
-                </figcaption> 
+                <figcaption align="middle"> Mirror-like sphere. </figcaption> 
             </td>
         </tr>
     </table>
