@@ -147,18 +147,18 @@ In this part, we make sure that the cloth can correctly collide with
 spheres and planes by move the point masses back a little bit if it is 
 colliding with the object.
 
-For spheres, we define a collision as the situation where the location 
-of the point mass is inside the sphere. If collides, we move the mass 
-towards the surface of sphere from its previous location, and scale down 
-the displacement by a friction factor; 
+For spheres, we define a collision as when the location of the point 
+mass is inside the sphere. If collides, we move the mass towards the 
+surface of sphere from its previous location, and scale down the 
+displacement by a friction factor; 
 
-For planes, we define a collision 
-as the current location and the previous location of the mass is on 
-different sides of the plane. If collides, similarly, we move the mass 
-towards the other side of the plane from it previous location, and scale 
-down the displacement by a friction factor. We also make sure that if 
-its location is too close to the plane, we move the mass out a little 
-bit to prevent the cloth from vibrating.
+For planes, we define a collision as when the current location and the 
+previous location of the mass is on different sides of the plane. If 
+collides, similarly, we move the mass towards the other side of the 
+plane from it previous location, and scale down the displacement by a 
+friction factor. We also make sure that if its location is too close to 
+the plane, we move the mass out a little bit to prevent the cloth from 
+vibrating.
 
 <div align="middle">
     <table width="100%" align="middle">
@@ -228,7 +228,7 @@ other. The final displacement is the weighted sum of the corrections
 from all other masses in the same box. In this way, our cloth is moving 
 itself from collapsing on itself.
 
-Again, in the following table, we can see the difference result from 
+Again, in the following table, we can see the animated result from 
 different coefficients. The images in the middle column are identical 
 and is for reference.
 
@@ -274,3 +274,175 @@ while a lower ks or a higher density will cause it to fold faster and in
 more number of folds.
 
 ## Part 5: Shaders
+
+In this part, we implement a variety of shaders. A shader, in general, 
+is a program that takes into a vertex or a triangle to be rendered, and 
+send its corresponding color to the GPU. 
+
+In OpenGL, the `.vert` shader apply transforms to the input vertex 
+according to camera angels, and can even apply custom transforms like 
+below. It writes the result to the `.frag` shader and the GPU though 
+`gl_Position`. The `.frag` file is responsible for calculating the color 
+of the input vertex.
+
+Through modifying the two files, we can create a shader program that can 
+represent different materials through some writing different color 
+according to the vertex location, normal direction and light location.
+
+The Blinn-Phong shading model is a specular model that is a combination 
+of diffuse model and reflective materials. It is more mirror-like when 
+the half vector is close to the normal vector, and is more diffuse 
+otherwise. 
+
+<div align="middle">
+    <table width="100%" align="middle">
+        <tr>
+            <td align="middle">
+                <img src="images/p5_phong_global.png" width="100%"/>
+            </td>
+            <td align="middle">
+                <img src="images/p5_phong_diffse.png" width="100%"/>
+            </td>
+            <td align="middle">
+                <img src="images/p5_phong_specular.png" width="100%"/>
+            </td>
+            <td align="middle">
+                <img src="images/p5_phong_all.png" width="100%"/>
+            </td>
+        </tr>
+        <tr>
+            <td> 
+                <figcaption align="middle"> 
+                    Ambient component in Blinn-Phong model.
+                </figcaption> 
+            </td>
+            <td> 
+                <figcaption align="middle"> 
+                    Diffuse component in Blinn-Phong model.
+                </figcaption> 
+            </td>
+            <td> 
+                <figcaption align="middle"> 
+                    Specular component in Blinn-Phong model.
+                </figcaption> 
+            </td>
+            <td> 
+                <figcaption align="middle"> 
+                    Final result of Blinn-Phong model.
+                </figcaption> 
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div align="middle">
+    <img src="images/p5_texture.png" width="60%"/>
+    <figcaption align="middle"> 
+        Rendered with custom lunar texture.
+    </figcaption>
+</div>
+
+<div align="middle">
+    <table width="100%" align="middle">
+        <tr>
+            <td align="middle">
+                <img src="images/p5_bump.png" width="100%"/>
+            </td>
+            <td align="middle">
+                <img src="images/p5_displacement.png" width="100%"/>
+            </td>
+        </tr>
+        <tr>
+            <td> 
+                <figcaption align="middle"> 
+                    Bump with brick texture.
+                </figcaption> 
+            </td>
+            <td> 
+                <figcaption align="middle"> 
+                    Dispacement with brick texture.
+                </figcaption> 
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div align="middle">
+    <table width="100%" align="middle">
+        <tr>
+            <td align="middle">
+                <img src="images/p5_bump_coarse.png" width="100%"/>
+            </td>
+            <td align="middle">
+                <img src="images/p5_displacement_coarse.png" width="100%"/>
+            </td>
+        </tr>
+        <tr>
+            <td> 
+                <figcaption align="middle"> 
+                    Bump, more coarse sphere mesh.
+                </figcaption> 
+            </td>
+            <td> 
+                <figcaption align="middle"> 
+                    Dispacement, more coarse sphere mesh.
+                </figcaption> 
+            </td>
+        </tr>
+        <tr>
+            <td align="middle">
+                <img src="images/p5_bump_fine.png" width="100%"/>
+            </td>
+            <td align="middle">
+                <img src="images/p5_displacement_fine.png" width="100%"/>
+            </td>
+        </tr>
+        <tr>
+            <td> 
+                <figcaption align="middle"> 
+                    Bump, finer sphere mesh.
+                </figcaption> 
+            </td>
+            <td> 
+                <figcaption align="middle"> 
+                    Dispacement, finer sphere mesh.
+                </figcaption> 
+            </td>
+        </tr>
+    </table>
+</div>
+
+As we can see, if the mesh of the sphere is more coarse, the 
+displacement perform much worse since the vertices are undersampling the 
+texture. There aren't enough vertices to sample the jump in height in 
+the texture. For the bump render though, the difference is much smaller.
+This is due to the fact that our texture is mostly uniform except for 
+the jumps between the bricks, and rendering can correctly interpolate 
+the color between the vertices. If our texture is more refined and has 
+more discontinuities, the difference between the two mesh will be more 
+prominent.
+
+<div align="middle">
+    <table width="100%" align="middle">
+        <tr>
+            <td align="middle">
+                <img src="images/p5_mirror_cloth.png" width="100%"/>
+            </td>
+            <td align="middle">
+                <img src="images/p5_mirror_sphere.png" width="100%"/>
+            </td>
+        </tr>
+        <tr>
+            <td> 
+                <figcaption align="middle"> 
+                    Mirror on the cloth.
+                </figcaption> 
+            </td>
+            <td> 
+                <figcaption align="middle"> 
+                    Mirror on the sphere.
+                </figcaption> 
+            </td>
+        </tr>
+    </table>
+</div>
